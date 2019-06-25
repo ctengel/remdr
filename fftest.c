@@ -1,8 +1,7 @@
 /*
- * $id$
- *
  * Tests the force feedback driver
  * Copyright 2001-2002 Johann Deneux <deneux@ifrance.com>
+ * Copyright 2019 Chris Engelhart
  */
 
 /*
@@ -21,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA.
  *
- * You can contact the author by email at this address:
- * Johann Deneux <deneux@ifrance.com>
  */
 
 #include <stdio.h>
@@ -49,31 +46,16 @@ char* effect_names[] = {
 	"Weak Rumble"
 };
 
-int main(int argc, char** argv)
+int doit(const char * device_file_name, int effect_id, int duration)
 {
 	struct ff_effect effects[N_EFFECTS];
 	struct input_event play, stop, gain;
 	int fd;
-	const char * device_file_name = "/dev/input/event0";
 	unsigned char relFeatures[1 + REL_MAX/8/sizeof(unsigned char)];
 	unsigned char absFeatures[1 + ABS_MAX/8/sizeof(unsigned char)];
 	unsigned char ffFeatures[1 + FF_MAX/8/sizeof(unsigned char)];
 	int n_effects;	/* Number of effects the device can play at the same time */
 	int i;
-
-	printf("Force feedback test program.\n");
-	printf("HOLD FIRMLY YOUR WHEEL OR JOYSTICK TO PREVENT DAMAGES\n\n");
-
-	for (i=1; i<argc; ++i) {
-		if (strncmp(argv[i], "--help", 64) == 0) {
-			printf("Usage: %s /dev/input/eventXX\n", argv[0]);
-			printf("Tests the force feedback driver\n");
-			exit(1);
-		}
-		else {
-			device_file_name = argv[i];
-		}
-	}
 
 	/* Open device */
 	fd = open(device_file_name, O_RDWR);
@@ -338,17 +320,10 @@ int main(int argc, char** argv)
 	}
 
 
-	/* Ask user what effects to play */
-	do {
-		printf("Enter effect number, -1 to exit\n");
-		i = -1;
-		if (scanf("%d", &i) == EOF) {
-			printf("Read error\n");
-		}
-		else if (i >= 0 && i < N_EFFECTS) {
+		if (effect_id >= 0 && effect_id < N_EFFECTS) {
 			memset(&play,0,sizeof(play));
 			play.type = EV_FF;
-			play.code = effects[i].id;
+			play.code = effects[effect_id].id;
 			play.value = 1;
 
 			if (write(fd, (const void*) &play, sizeof(play)) == -1) {
@@ -356,17 +331,13 @@ int main(int argc, char** argv)
 				exit(1);
 			}
 
-			printf("Now Playing: %s\n", effect_names[i]);
-		}
-		else if (i == -2) {
-			/* Crash test */
-			int i = *((int *)0);
-			printf("Crash test: %d\n", i);
+			printf("Now Playing: %s\n", effect_names[effect_id]);
 		}
 		else if (i != -1) {
 			printf("No such effect\n");
 		}
-	} while (i>=0);
+
+	sleep(duration);
 
 	/* Stop the effects */
 	printf("Stopping effects\n");
@@ -383,5 +354,14 @@ int main(int argc, char** argv)
 	}
 	
 
+	return 0;
+}
+
+int main(int argc, char** argv) {
+	int i;
+	for(i=0; i < 3; i++) {
+		doit(argv[1], 5, 5);
+		doit(argv[2], 5, 5);
+	}
 	exit(0);
 }
