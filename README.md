@@ -13,4 +13,12 @@ Remote EMDR
 * https://android.googlesource.com/kernel/common.git/+/brillo-m9-release/drivers/hid/hid-sony.c
 * https://www.kernel.org/doc/html/latest/input/ff.html
 * https://github.com/flosse/linuxconsole/blob/master/utils/fftest.c
+* How to send a rumble effect to a device using python evdev - Stack Overflow	https://stackoverflow.com/questions/33201711/how-to-send-a-rumble-effect-to-a-device-using-python-evdev
+* gamepad - Control vibration motors of game controller in pure Python? - Stack Overflow	https://stackoverflow.com/questions/49968540/control-vibration-motors-of-game-controller-in-pure-python	
+API Reference Python-evdev	https://python-evdev.readthedocs.io/en/latest/apidoc.html
+* Force feedback for Linux The Linux Kernel documentation https://www.kernel.org/doc/html/latest/input/ff.html	
+
+## Next steps
+* Periodic vs Rumble
+* Gain
 
